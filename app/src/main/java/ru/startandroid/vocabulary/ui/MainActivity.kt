@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import dagger.hilt.android.AndroidEntryPoint
-import ru.startandroid.vocabulary.ui.ImportScreen
+import ru.startandroid.vocabulary.ui.importdata.ImportScreen
 import ru.startandroid.vocabulary.ui.theme.VocabularyTheme
 
 @AndroidEntryPoint

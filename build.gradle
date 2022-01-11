@@ -1,8 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext {
-        compose_version = '1.0.5'
-    }
     repositories {
         google()
         mavenCentral()
@@ -19,3 +16,10 @@ buildscript {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext.versions = [
+        compose: "1.0.5",
+        room:  "2.4.0",
+        hilt: "2.40.5",
+        coroutines: "1.4.1"
+]
