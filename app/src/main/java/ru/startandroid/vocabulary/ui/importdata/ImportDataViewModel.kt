@@ -21,6 +21,7 @@ class ImportDataViewModel @Inject constructor(
 
     fun onFileChosen(uri: Uri?) {
         uri?.let {
+            // TODO move to IO thread
             try {
                 val s = resourceProvider.openInputStream(it)
                     ?.readBytes()
