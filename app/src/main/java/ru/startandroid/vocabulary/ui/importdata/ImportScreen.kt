@@ -1,4 +1,4 @@
-package ru.startandroid.vocabulary.ui
+package ru.startandroid.vocabulary.ui.importdata
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,8 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.startandroid.vocabulary.model.dto.WordDataFile
-import ru.startandroid.vocabulary.ui.importdata.ImportDataViewModel
+import ru.startandroid.vocabulary.model.dto.WordDataNew
 import ru.startandroid.vocabulary.ui.theme.VocabularyTheme
 
 @Composable
@@ -39,7 +38,7 @@ fun ImportScreen(
 private fun ImportScreenInternal(
     onFileChosen: (uri: Uri?) -> Unit = {},
     onSubmitClick: () -> Unit = {},
-    data: List<WordDataFile> = emptyList()
+    data: List<WordDataNew> = emptyList()
 ) {
     val filePickLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -64,7 +63,7 @@ fun PickFileButton(onPickClick: () -> Unit = { }) {
 
 @Composable
 fun PreviewDataAndSubmit(
-    data: List<WordDataFile>,
+    data: List<WordDataNew>,
     onSubmitClick: () -> Unit = { }
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
@@ -99,12 +98,12 @@ fun PickFilePreview() {
 fun DataAndSubmitPreview() {
     val data = remember {
         listOf(
-            WordDataFile(
+            WordDataNew(
                 word = "Word 1",
                 translate = "Translate 1",
                 tags = setOf("tag1", "tag2", "tag3")
             ),
-            WordDataFile(
+            WordDataNew(
                 word = "Word 2",
                 translate = "Translate 2",
                 tags = setOf("tag4", "tag5", "tag6")

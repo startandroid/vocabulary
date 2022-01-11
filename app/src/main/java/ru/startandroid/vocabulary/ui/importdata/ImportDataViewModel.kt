@@ -1,49 +1,39 @@
 package ru.startandroid.vocabulary.ui.importdata
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.startandroid.vocabulary.data.ResourceProvider
-import ru.startandroid.vocabulary.model.dto.WordDataFile
+import kotlinx.coroutines.launch
+import ru.startandroid.vocabulary.model.dto.WordDataNew
+import ru.startandroid.vocabulary.model.usecase.AddWordsUseCase
+import ru.startandroid.vocabulary.model.usecase.ImportWordsFromFileUseCase
 
 import javax.inject.Inject
 
 @HiltViewModel
 class ImportDataViewModel @Inject constructor(
-    private val resourceProvider: ResourceProvider
+    private val importWordsFromFileUseCase: ImportWordsFromFileUseCase,
+    private val addWordsUseCase: AddWordsUseCase
 ): ViewModel() {
 
-    private val _data = MutableLiveData<List<WordDataFile>>(emptyList())
-    val data: LiveData<List<WordDataFile>> = _data
+    private val _data = MutableLiveData<List<WordDataNew>>(emptyList())
+    val data: LiveData<List<WordDataNew>> = _data
 
     fun onFileChosen(uri: Uri?) {
         uri?.let {
-            // TODO move to IO thread
-            try {
-                val s = resourceProvider.openInputStream(it)
-                    ?.readBytes()
-                    ?.toString(Charsets.UTF_8)
-                    ?.split("\n")
-                    ?.map {
-                        val data = it.split("###")
-                        WordDataFile(
-                            word = data[0],
-                            translate = data[1],
-                            tags = data[2].split(",").toSet()
-                        )
-                    }
-                s?.let { _data.value = it }
-            } catch (e: Exception) {
-                // TODO return as a message to the screen
+            viewModelScope.launch {
+                _data.value = importWordsFromFileUseCase.invoke(it)
             }
         }
     }
 
     fun onSubmitClick() {
-
+        viewModelScope.launch {
+            addWordsUseCase.invoke(data.value!!)
+        }
     }
 
 }
