@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import dagger.hilt.android.AndroidEntryPoint
 import ru.startandroid.vocabulary.ui.importdata.ImportScreen
+import ru.startandroid.vocabulary.ui.learn.options.OptionsScreen
 import ru.startandroid.vocabulary.ui.theme.VocabularyTheme
 
 @AndroidEntryPoint
@@ -18,7 +19,8 @@ class MainActivity : ComponentActivity() {
             VocabularyTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    ImportScreen()
+                    //ImportScreen()
+                    OptionsScreen()
                 }
             }
         }

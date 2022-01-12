@@ -9,12 +9,15 @@ import dagger.hilt.components.SingletonComponent
 import ru.startandroid.vocabulary.data.ResourceProvider
 import ru.startandroid.vocabulary.data.db.AppDatabase
 import ru.startandroid.vocabulary.data.db.WordsDao
+import ru.startandroid.vocabulary.data.mapper.WordMapperDbToUi
 import ru.startandroid.vocabulary.data.mapper.WordMapperNewToDb
 import ru.startandroid.vocabulary.data.repository.FileRepositoryImpl
 import ru.startandroid.vocabulary.data.repository.WordRepositoryImpl
 import ru.startandroid.vocabulary.model.repository.FileRepository
 import ru.startandroid.vocabulary.model.repository.WordRepository
+import javax.inject.Provider
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -22,24 +25,30 @@ class DataModule {
 
     @Singleton
     @Provides
-    fun provideFileRepository(resourceProvider: ResourceProvider): FileRepository {
-        return FileRepositoryImpl(resourceProvider)
+    fun provideFileRepository(resourceProvider: ResourceProvider, randomProvider: Provider<Random>): FileRepository {
+        return FileRepositoryImpl(resourceProvider, randomProvider)
     }
 
     @Singleton
     @Provides
-    fun provideWordRepository(wordsDao: WordsDao, wordMapperNewToDb: WordMapperNewToDb): WordRepository {
-        return WordRepositoryImpl(wordsDao, wordMapperNewToDb)
+    fun provideWordRepository(wordsDao: WordsDao, wordMapperNewToDb: WordMapperNewToDb, wordMapperDbToUi: WordMapperDbToUi): WordRepository {
+        return WordRepositoryImpl(wordsDao, wordMapperNewToDb, wordMapperDbToUi)
     }
 
     @Singleton
     @Provides
-    fun providesAppDatabase(app: Application): AppDatabase {
+    fun provideAppDatabase(app: Application): AppDatabase {
         return Room.databaseBuilder(app, AppDatabase::class.java, "database").build()
     }
 
     @Provides
-    fun providesWordsDao(appDatabase: AppDatabase): WordsDao {
+    fun provideWordsDao(appDatabase: AppDatabase): WordsDao {
         return appDatabase.wordDao()
     }
+
+    @Provides
+    fun provideRandom(): Random {
+        return Random(System.currentTimeMillis() % Integer.MAX_VALUE)
+    }
+
 }
