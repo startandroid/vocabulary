@@ -24,12 +24,12 @@ import ru.startandroid.vocabulary.ui.theme.VocabularyTheme
 
 @Composable
 fun ImportScreen(
-    importDataViewModel: ImportDataViewModel = viewModel()
+    importScreenViewModel: ImportScreenViewModel = viewModel()
 ) {
-    val data = importDataViewModel.data.observeAsState()
+    val data = importScreenViewModel.data.observeAsState()
     ImportScreenInternal(
-        onFileChosen = importDataViewModel::onFileChosen,
-        onSubmitClick = importDataViewModel::onSubmitClick,
+        onFileChosen = importScreenViewModel::onFileChosen,
+        onSubmitClick = importScreenViewModel::onSubmitClick,
         data = data.value!!
     )
 }

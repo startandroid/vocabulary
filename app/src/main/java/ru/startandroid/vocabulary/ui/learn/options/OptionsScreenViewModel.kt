@@ -1,0 +1,27 @@
+package ru.startandroid.vocabulary.ui.learn.options
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import ru.startandroid.vocabulary.model.dto.WordData
+import ru.startandroid.vocabulary.model.usecase.GetWordsAccordingToOptionsUseCase
+import javax.inject.Inject
+
+@HiltViewModel
+class OptionsScreenViewModel @Inject constructor(
+    private val getWordsAccordingToOptionsUseCase: GetWordsAccordingToOptionsUseCase
+): ViewModel() {
+
+    private val _data = MutableLiveData<List<WordData>>(emptyList())
+    val data: LiveData<List<WordData>> = _data
+
+    fun onPreviewClick(count: Int) {
+        viewModelScope.launch {
+            _data.value = getWordsAccordingToOptionsUseCase.invoke(count)
+        }
+    }
+
+}

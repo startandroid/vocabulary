@@ -14,7 +14,7 @@ import ru.startandroid.vocabulary.model.usecase.ImportWordsFromFileUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class ImportDataViewModel @Inject constructor(
+class ImportScreenViewModel @Inject constructor(
     private val importWordsFromFileUseCase: ImportWordsFromFileUseCase,
     private val addWordsUseCase: AddWordsUseCase
 ): ViewModel() {
