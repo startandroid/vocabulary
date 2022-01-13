@@ -1,5 +1,6 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ru.startandroid.vocabulary.model.dto.WordData
@@ -24,7 +26,7 @@ import ru.startandroid.vocabulary.ui.theme.VocabularyTheme
 
 @Composable
 fun OptionsScreen(
-    optionsScreenViewModel: OptionsScreenViewModel = viewModel()
+    optionsScreenViewModel: OptionsScreenViewModel = viewModel(LocalContext.current as ComponentActivity)
 ) {
     val data = optionsScreenViewModel.data.observeAsState()
     OptionsScreenInternal(
