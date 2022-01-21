@@ -74,7 +74,6 @@ class SessionScreenViewModel @Inject constructor(
         )
     }
 
-    // TODO use just random algorithm if word count less than 10
     private fun shouldPickWrong(): Boolean {
         if (words.isEmpty()) return true
 
@@ -96,7 +95,6 @@ class SessionScreenViewModel @Inject constructor(
         return false
     }
 
-    // TODO if no correct words, and we do correct, we get this word again next time
     fun correct() {
         Log.d("qweee", "--- correct ---")
         val wordData = currentWordDataSession

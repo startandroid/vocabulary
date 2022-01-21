@@ -61,7 +61,6 @@ fun SessionScreenImpl(
 ) {
 
     Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
-        //Text(text = "Session", style = MaterialTheme.typography.h2)
 
         Spacer(modifier = Modifier.height(16.dp))
         Item("Word", wordData.word, onOpenSecretClick)
@@ -89,24 +88,6 @@ fun SessionScreenImpl(
 
 @Composable
 fun Item(label: String, text: String, onOpenSecretClick: () -> Unit) {
-
-//    val interactionSource = remember { MutableInteractionSource() }
-//    val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-//
-//    if (isPressed) {
-//        onOpenSecretClick()
-//    }
-//
-//    OutlinedTextField(
-//        value = text,
-//        onValueChange = {},
-//        label = { Text(text = label, style = MaterialTheme.typography.subtitle1) },
-//        readOnly = true,
-//        enabled = false,
-//        interactionSource = interactionSource,
-//        textStyle = MaterialTheme.typography.h5,
-//        modifier = Modifier.focusable(false)
-//    )
 
     Text(
         text = label,
