@@ -21,4 +21,12 @@ class WordRepositoryImpl(
         return wordMapperDbToUi.mapList(wordsDao.getAll())
     }
 
+    override suspend fun incrementScore(word: String) {
+        wordsDao.incrementScore(word)
+    }
+
+    override suspend fun decrementScore(word: String) {
+        wordsDao.decrementScore(word)
+    }
+
 }

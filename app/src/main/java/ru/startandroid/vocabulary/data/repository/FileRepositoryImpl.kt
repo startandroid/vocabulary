@@ -17,7 +17,8 @@ class FileRepositoryImpl(
 ) : FileRepository {
     override suspend fun importWordsFromFile(uri: Uri): List<WordDataNew> {
         return withContext(Dispatchers.IO) {
-            generateFakeData()
+            readDataFromFile(uri)
+            //generateFakeData()
         }
     }
 
@@ -27,13 +28,16 @@ class FileRepositoryImpl(
             ?.readBytes()
             ?.toString(Charsets.UTF_8)
             ?.split("\n")
-            ?.map {
+            ?.mapNotNull {
                 val data = it.split("###")
-                WordDataNew(
-                    word = data[0],
-                    translate = data[1],
-                    tags = data[2].split(",").toSet()
-                )
+                if (data.size == 3)
+                    WordDataNew(
+                        word = data[0],
+                        translate = data[1],
+                        tags = data[2].split(",").toSet()
+                    )
+                else
+                    null
             } ?: emptyList()
     }
 

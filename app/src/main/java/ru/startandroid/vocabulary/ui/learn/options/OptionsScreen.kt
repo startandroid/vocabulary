@@ -1,36 +1,38 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
-import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import android.util.Log
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import ru.startandroid.vocabulary.model.dto.WordData
 import ru.startandroid.vocabulary.ui.theme.VocabularyTheme
 
 
 @Composable
 fun OptionsScreen(
-    optionsScreenViewModel: OptionsScreenViewModel = viewModel(LocalContext.current as ComponentActivity)
+    navController: NavHostController,
+    optionsScreenViewModel: OptionsScreenViewModel = hiltViewModel()
 ) {
     val data = optionsScreenViewModel.data.observeAsState()
     OptionsScreenInternal(
         onPreviewClick = optionsScreenViewModel::onPreviewClick,
+        onLearnClick = { navController.navigate("session") },
         data = data.value!!
     )
 }
@@ -39,10 +41,11 @@ fun OptionsScreen(
 @Composable
 private fun OptionsScreenInternal(
     onPreviewClick: (Int) -> Unit = { },
+    onLearnClick: () -> Unit = { },
     data: List<WordData> = emptyList()
 ) {
-    var count by rememberSaveable { mutableStateOf("10") }
-    Column(modifier = Modifier.padding(16.dp)) {
+    var count by rememberSaveable { mutableStateOf("15") }
+    Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
         OutlinedTextField(
             value = count,
             onValueChange = {count = it},
@@ -54,7 +57,7 @@ private fun OptionsScreenInternal(
             Text(text = "Preview")
         }
         Spacer(modifier = Modifier.height(8.dp))
-        LazyColumn {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             items(data.size) { index ->
                 val wordData = data[index]
                 Text(
@@ -62,6 +65,12 @@ private fun OptionsScreenInternal(
                     style = MaterialTheme.typography.body1
                 )
 
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        if (data.isNotEmpty()) {
+            Button(onClick = { onLearnClick() }) {
+                Text(text = "Learn")
             }
         }
     }
