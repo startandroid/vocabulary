@@ -8,5 +8,6 @@ data class WordDataDb(
     @PrimaryKey
     var word: String,
     var translate: String,
-    var tags: String
+    var tags: String,
+    var score: Int
 )
