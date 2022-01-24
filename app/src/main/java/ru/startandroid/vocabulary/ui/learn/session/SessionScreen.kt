@@ -31,7 +31,7 @@ import ru.startandroid.vocabulary.ui.learn.options.OptionsScreenViewModel
 @Composable
 fun SessionScreen(
     navController: NavHostController,
-    optionsScreenViewModel: OptionsScreenViewModel = hiltViewModel(navController.previousBackStackEntry!!),
+    optionsScreenViewModel: OptionsScreenViewModel = hiltViewModel(navController.getBackStackEntry("options")),
     sessionScreenViewModel: SessionScreenViewModel = hiltViewModel()
 ) {
     sessionScreenViewModel.putWordData(optionsScreenViewModel.data.value!!)

@@ -17,8 +17,18 @@ class OptionsScreenViewModel @Inject constructor(
 
     private val _data = MutableLiveData<List<WordData>>(emptyList())
     val data: LiveData<List<WordData>> = _data
+    var count = 0
 
     fun onPreviewClick(count: Int) {
+        this.count = count
+        refresh()
+    }
+
+    fun onRefresh() {
+        refresh()
+    }
+
+    private fun refresh() {
         viewModelScope.launch {
             _data.value = getWordsAccordingToOptionsUseCase.invoke(count)
         }

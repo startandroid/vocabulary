@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.startandroid.vocabulary.ui.home.HomeScreen
 import ru.startandroid.vocabulary.ui.importdata.ImportScreen
 import ru.startandroid.vocabulary.ui.learn.options.OptionsScreen
+import ru.startandroid.vocabulary.ui.learn.preview.PreviewScreen
 import ru.startandroid.vocabulary.ui.learn.session.SessionScreen
 import ru.startandroid.vocabulary.ui.theme.VocabularyTheme
 
@@ -37,16 +38,24 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainNavigation(navController: NavHostController) {
     // TODO create a nested navigation?
+    // TODO use constants for route names
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             HomeScreen(navController)
         }
+
         composable("import") {
             ImportScreen()
         }
+
         composable("options") {
             OptionsScreen(navController)
         }
+
+        composable("preview") {
+            PreviewScreen(navController)
+        }
+
         composable("session") {
             SessionScreen(navController)
         }
