@@ -1,6 +1,10 @@
 package ru.startandroid.vocabulary.data.di
 
 import android.app.Application
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -12,8 +16,10 @@ import ru.startandroid.vocabulary.data.db.WordsDao
 import ru.startandroid.vocabulary.data.mapper.WordMapperDbToUi
 import ru.startandroid.vocabulary.data.mapper.WordMapperNewToDb
 import ru.startandroid.vocabulary.data.repository.FileRepositoryImpl
+import ru.startandroid.vocabulary.data.repository.PreferencesRepositoryImpl
 import ru.startandroid.vocabulary.data.repository.WordRepositoryImpl
 import ru.startandroid.vocabulary.model.repository.FileRepository
+import ru.startandroid.vocabulary.model.repository.PreferencesRepository
 import ru.startandroid.vocabulary.model.repository.WordRepository
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -37,6 +43,12 @@ class DataModule {
 
     @Singleton
     @Provides
+    fun providePreferencesRepository(dataStore: DataStore<Preferences>): PreferencesRepository {
+        return PreferencesRepositoryImpl(dataStore)
+    }
+
+    @Singleton
+    @Provides
     fun provideAppDatabase(app: Application): AppDatabase {
         return Room.databaseBuilder(app, AppDatabase::class.java, "database").build()
     }
@@ -50,5 +62,15 @@ class DataModule {
     fun provideRandom(): Random {
         return Random(System.currentTimeMillis() % Integer.MAX_VALUE)
     }
+
+    @Singleton
+    @Provides
+    fun provideDataStore(app: Application): DataStore<Preferences> {
+        return app.dataStore
+    }
+
+    private val Context.dataStore by preferencesDataStore(
+        name = "preferences"
+    )
 
 }

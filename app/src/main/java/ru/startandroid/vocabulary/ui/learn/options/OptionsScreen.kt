@@ -6,12 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,9 +27,10 @@ fun OptionsScreen(
 ) {
     val chips = optionsScreenViewModel.chips.observeAsState()
     OptionsScreenInternal(
+        count = optionsScreenViewModel.count,
         chips = chips.value ?: emptyList(),
         onPreviewClick = {
-            optionsScreenViewModel.onPreviewClick(it)
+            optionsScreenViewModel.onPreviewClick()
             navController.navigate("preview")
         },
         onChipClick = optionsScreenViewModel::onChipClick
@@ -43,19 +40,20 @@ fun OptionsScreen(
 
 @Composable
 private fun OptionsScreenInternal(
+    count: MutableState<Int> = mutableStateOf(10),
     chips: List<ChipData> = emptyList(),
-    onPreviewClick: (Int) -> Unit = { },
+    onPreviewClick: () -> Unit = { },
     onChipClick: (String) -> Unit = { }
 ) {
-    var count by rememberSaveable { mutableStateOf("15") }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
         OutlinedTextField(
-            value = count,
-            onValueChange = { count = it },
+            value = count.value.toString(),
+            onValueChange = { count.value = it.toInt() },
             label = { Text("Words count") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
@@ -70,7 +68,7 @@ private fun OptionsScreenInternal(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { onPreviewClick(count.toInt()) }) {
+        Button(onClick = { onPreviewClick() }) {
             Text(text = "Preview")
         }
     }

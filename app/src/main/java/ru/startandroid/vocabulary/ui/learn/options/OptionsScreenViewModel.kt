@@ -1,5 +1,7 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.startandroid.vocabulary.model.dto.SessionOptions
 import ru.startandroid.vocabulary.model.dto.WordData
+import ru.startandroid.vocabulary.model.repository.PreferencesRepository
 import ru.startandroid.vocabulary.model.usecase.GetAllTagsUseCase
 import ru.startandroid.vocabulary.model.usecase.GetWordsAccordingToOptionsUseCase
 import javax.inject.Inject
@@ -15,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class OptionsScreenViewModel @Inject constructor(
     private val getWordsAccordingToOptionsUseCase: GetWordsAccordingToOptionsUseCase,
-    private val getAllTagsUseCase: GetAllTagsUseCase
+    private val getAllTagsUseCase: GetAllTagsUseCase,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _data = MutableLiveData<List<WordData>>(emptyList())
@@ -24,13 +28,16 @@ class OptionsScreenViewModel @Inject constructor(
     private val _chips = MutableLiveData<List<ChipData>>(emptyList())
     val chips: LiveData<List<ChipData>> = _chips
 
+    val count = mutableStateOf(15)
+
     init {
         viewModelScope.launch {
             _chips.value = getAllTagsUseCase.invoke().map { ChipData(label = it) }
+            preferencesRepository.getLastSessionOptions()?.let {
+                applyOptions(it)
+            }
         }
     }
-
-    var count = 0
 
     fun onChipClick(label: String) {
         _chips.value = _chips.value?.map {
@@ -42,9 +49,12 @@ class OptionsScreenViewModel @Inject constructor(
         }
     }
 
-    fun onPreviewClick(count: Int) {
-        this.count = count
+    fun onPreviewClick() {
+        Log.d("qweee", "onPreviewClick ${count.value}")
         refresh()
+        viewModelScope.launch {
+            preferencesRepository.saveSessionOptions(currentOptions())
+        }
     }
 
     fun onRefresh() {
@@ -54,12 +64,23 @@ class OptionsScreenViewModel @Inject constructor(
     private fun refresh() {
         viewModelScope.launch {
             _data.value = getWordsAccordingToOptionsUseCase.invoke(
-                SessionOptions(
-                    count = count,
-                    tags = chips.value?.filter { it.isSelected }?.map { it.label }?.toSet()
-                        ?: emptySet()
-                )
+                currentOptions()
             )
+        }
+    }
+
+    private fun currentOptions(): SessionOptions {
+        return SessionOptions(
+            count = count.value,
+            tags = chips.value?.filter { it.isSelected }?.map { it.label }?.toSet()
+                ?: emptySet()
+        )
+    }
+
+    private fun applyOptions(options: SessionOptions) {
+        count.value = options.count
+        _chips.value = chips.value?.map {
+            it.copy(isSelected = options.tags.contains(it.label))
         }
     }
 
