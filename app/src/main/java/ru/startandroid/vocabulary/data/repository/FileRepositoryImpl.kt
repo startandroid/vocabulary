@@ -32,9 +32,12 @@ class FileRepositoryImpl(
                 val data = it.split("###")
                 if (data.size == 3)
                     WordDataNew(
-                        word = data[0],
-                        translate = data[1],
-                        tags = data[2].split(",").toSet()
+                        word = data[0].trim(),
+                        translate = data[1].trim(),
+                        tags = data[2].split(",")
+                            .map { it.lowercase().trim() }
+                            .filter { it.isNotEmpty() }
+                            .toSet()
                     )
                 else
                     null

@@ -19,7 +19,7 @@ task clean(type: Delete) {
 
 ext.versions = [
         compose: "1.0.5",
-        room:  "2.4.0",
+        room: '2.4.1',
         hilt: "2.40.5",
         coroutines: "1.4.1",
         navigation: "2.4.0-rc01"
