@@ -33,7 +33,7 @@ class SessionScreenViewModel @Inject constructor(
 
     fun putWordData(data: List<WordData>) {
         if (words.isNotEmpty()) return
-        words.addAll(data.map { WordDataSession(word = it.word, translate = it.translate) })
+        words.addAll(data.map { WordDataSession(word = it.word, translate = it.translate, tags = it.tags) })
         calculateLast()
         nextWord()
     }
@@ -70,7 +70,8 @@ class SessionScreenViewModel @Inject constructor(
         currentWordDataSession = wordData
         _currentWord.value = WordDataSessionUI(
             word = if (currentWordDataSession.reverse) secret else wordData.word,
-            translate = if (currentWordDataSession.reverse) wordData.translate else secret
+            translate = if (currentWordDataSession.reverse) wordData.translate else secret,
+            tags = wordData.tags
         )
     }
 
@@ -83,14 +84,16 @@ class SessionScreenViewModel @Inject constructor(
 
         if (wrong.size >= words.size && counter >= 2) return true
 
-        val count = when (wrong.size) {
-            in 1..3 -> 5
-            in 4..5 -> 4
-            in 6..7 -> 3
-            in 8..9 -> 2
-            else -> return false
-        }
-        if (counter >= count) return true
+        if (counter >= 3) return true
+
+//        val count = when (wrong.size) {
+//            in 1..3 -> 5
+//            in 4..5 -> 4
+//            in 6..7 -> 3
+//            in 8..9 -> 2
+//            else -> return false
+//        }
+//        if (counter >= count) return true
 
         return false
     }
@@ -121,7 +124,7 @@ class SessionScreenViewModel @Inject constructor(
 
     fun openSecret() {
         Log.d("qweee", "open secret")
-        _currentWord.value = WordDataSessionUI(word = currentWordDataSession.word, translate = currentWordDataSession.translate)
+        _currentWord.value = WordDataSessionUI(word = currentWordDataSession.word, translate = currentWordDataSession.translate, tags = currentWordDataSession.tags)
     }
 
     inner class LastWords(private val maxSize: Int): LinkedHashMap<WordDataSession, String>() {
@@ -148,14 +151,9 @@ class SessionScreenViewModel @Inject constructor(
 
 }
 
-
-data class WordDataSessionUI(
-    val word: String,
-    val translate: String
-)
-
 data class WordDataSession(
     val word: String,
     val translate: String,
+    val tags: Set<String>,
     val reverse: Boolean = false,
 )

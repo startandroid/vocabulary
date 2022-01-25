@@ -1,26 +1,16 @@
 package ru.startandroid.vocabulary.ui.learn.session
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +32,7 @@ fun SessionScreen(
 fun SessionScreenAfterInit(
     sessionScreenViewModel: SessionScreenViewModel = hiltViewModel()
 ) {
-    val word =  sessionScreenViewModel.currentWord.observeAsState()
+    val word = sessionScreenViewModel.currentWord.observeAsState()
 
     SessionScreenImpl(
         wordData = word.value!!,
@@ -60,13 +50,18 @@ fun SessionScreenImpl(
     onWrongClick: () -> Unit = {}
 ) {
 
-    Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
 
         Spacer(modifier = Modifier.height(16.dp))
         Item("Word", wordData.word, onOpenSecretClick)
 
         Spacer(modifier = Modifier.height(16.dp))
         Item("Translation", wordData.translate, onOpenSecretClick)
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Tags: ${wordData.tags.joinToString(", ")}")
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -109,11 +104,23 @@ fun Item(label: String, text: String, onOpenSecretClick: () -> Unit) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SessionScreenWordPreview() {
-    SessionScreenImpl(wordData = WordDataSessionUI(word = "Word", translate = "**********"))
+    SessionScreenImpl(
+        wordData = WordDataSessionUI(
+            word = "Word",
+            translate = "**********",
+            tags = setOf("tag1")
+        )
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SessionScreenWordReversePreview() {
-    SessionScreenImpl(wordData = WordDataSessionUI(word = "**********", translate = "Translate"))
+    SessionScreenImpl(
+        wordData = WordDataSessionUI(
+            word = "**********",
+            translate = "Translate",
+            tags = setOf("tag2")
+        )
+    )
 }

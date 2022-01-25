@@ -1,5 +1,6 @@
 package ru.startandroid.vocabulary.model.usecase
 
+import ru.startandroid.vocabulary.model.dto.SessionOptions
 import ru.startandroid.vocabulary.model.dto.WordData
 import ru.startandroid.vocabulary.model.repository.WordRepository
 import javax.inject.Inject
@@ -11,10 +12,13 @@ class GetWordsAccordingToOptionsUseCase @Inject constructor(
     private val randomProvider: Provider<Random>
 ) {
 
-    suspend fun invoke(count: Int): List<WordData> {
+    // TODO make data extracting more fair according by all tags
+    // Otherwise some tags will not be in results
+    suspend fun invoke(options: SessionOptions): List<WordData> {
         return wordRepository.getAllWords()
+            .filter { it.tags.any { options.tags.contains(it) } }
             .shuffled(randomProvider.get())
-            .take(count)
+            .take(options.count)
     }
 
 }

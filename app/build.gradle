@@ -57,6 +57,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation "androidx.navigation:navigation-compose:$versions.navigation"
@@ -70,6 +71,7 @@ dependencies {
     implementation "androidx.compose.material:material:$versions.compose"
     debugImplementation "androidx.compose.ui:ui-tooling:$versions.compose"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$versions.compose"
+    implementation "com.google.accompanist:accompanist-flowlayout:0.24.0-alpha"
 
     implementation "androidx.room:room-runtime:$versions.room"
     kapt "androidx.room:room-compiler:$versions.room"
