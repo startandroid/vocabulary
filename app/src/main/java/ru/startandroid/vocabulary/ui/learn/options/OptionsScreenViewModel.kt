@@ -1,6 +1,5 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -50,7 +49,6 @@ class OptionsScreenViewModel @Inject constructor(
     }
 
     fun onPreviewClick() {
-        Log.d("qweee", "onPreviewClick ${count.value}")
         refresh()
         viewModelScope.launch {
             preferencesRepository.saveSessionOptions(currentOptions())
@@ -59,6 +57,18 @@ class OptionsScreenViewModel @Inject constructor(
 
     fun onRefresh() {
         refresh()
+    }
+
+    fun onSelectAll() {
+        _chips.value = chips.value?.map {
+            it.copy(isSelected = true)
+        }
+    }
+
+    fun onResetAll() {
+        _chips.value = chips.value?.map {
+            it.copy(isSelected = false)
+        }
     }
 
     private fun refresh() {

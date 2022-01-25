@@ -1,13 +1,17 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,7 +37,9 @@ fun OptionsScreen(
             optionsScreenViewModel.onPreviewClick()
             navController.navigate("preview")
         },
-        onChipClick = optionsScreenViewModel::onChipClick
+        onChipClick = optionsScreenViewModel::onChipClick,
+        onSelectAll = optionsScreenViewModel::onSelectAll,
+        onResetAll = optionsScreenViewModel::onResetAll
     )
 }
 
@@ -43,9 +49,10 @@ private fun OptionsScreenInternal(
     count: MutableState<Int> = mutableStateOf(10),
     chips: List<ChipData> = emptyList(),
     onPreviewClick: () -> Unit = { },
-    onChipClick: (String) -> Unit = { }
+    onChipClick: (String) -> Unit = { },
+    onSelectAll: () -> Unit = { },
+    onResetAll: () -> Unit = { }
 ) {
-
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -57,8 +64,8 @@ private fun OptionsScreenInternal(
             label = { Text("Words count") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        FlowRow {
+        Spacer(modifier = Modifier.height(16.dp))
+        FlowRow(mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp) {
             for (chip in chips) {
                 Chip(
                     label = chip.label,
@@ -66,6 +73,18 @@ private fun OptionsScreenInternal(
                     onClick = onChipClick
                 )
             }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            Text(
+                text = "Select All",
+                color = Color.Blue,
+                modifier = Modifier.clickable { onSelectAll() })
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Reset All",
+                color = Color.Blue,
+                modifier = Modifier.clickable { onResetAll() })
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { onPreviewClick() }) {
@@ -80,18 +99,25 @@ private fun Chip(
     isSelected: Boolean = false,
     onClick: (String) -> Unit = { }
 ) {
+    val border = if (isSelected)
+        BorderStroke(3.dp, MaterialTheme.colors.primary)
+    else
+        BorderStroke(1.dp, Color.Gray)
     Surface(
         modifier = Modifier
-            .padding(4.dp)
-            .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(4.dp))
-            .clickable { onClick(label) },
-        shape = MaterialTheme.shapes.medium,
-        color = if (isSelected) MaterialTheme.colors.primary else Color.Transparent
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                onClick(label)
+            },
+        border = border,
+        shape = RoundedCornerShape(16.dp),
     ) {
         Text(
             text = label,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(12.dp)
                 .defaultMinSize(minWidth = 48.dp),
             textAlign = TextAlign.Center
         )
