@@ -1,5 +1,6 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,6 +34,7 @@ fun OptionsScreen(
     OptionsScreenInternal(
         count = optionsScreenViewModel.count,
         chips = chips.value ?: emptyList(),
+        showDebugInfo = optionsScreenViewModel.showDebugInfo,
         onPreviewClick = {
             optionsScreenViewModel.onPreviewClick()
             navController.navigate("preview")
@@ -48,6 +50,7 @@ fun OptionsScreen(
 private fun OptionsScreenInternal(
     count: MutableState<String> = mutableStateOf("10"),
     chips: List<ChipData> = emptyList(),
+    showDebugInfo: MutableState<Boolean> = mutableStateOf(false),
     onPreviewClick: () -> Unit = { },
     onChipClick: (String) -> Unit = { },
     onSelectAll: () -> Unit = { },
@@ -86,6 +89,17 @@ private fun OptionsScreenInternal(
                 color = Color.Blue,
                 modifier = Modifier.clickable { onResetAll() })
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            Checkbox(checked = showDebugInfo.value, onCheckedChange = {
+                showDebugInfo.value = it
+            })
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "Show debug info", modifier = Modifier.clickable {
+                showDebugInfo.value = !showDebugInfo.value
+            })
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { onPreviewClick() }) {
             Text(text = "Preview")
