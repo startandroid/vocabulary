@@ -36,6 +36,7 @@ fun SessionScreenAfterInit(
 
     SessionScreenImpl(
         wordData = word.value!!,
+        debugInfo = sessionScreenViewModel.debugInfo.value,
         onOpenSecretClick = sessionScreenViewModel::openSecret,
         onCorrectClick = sessionScreenViewModel::correct,
         onWrongClick = sessionScreenViewModel::wrong
@@ -45,6 +46,7 @@ fun SessionScreenAfterInit(
 @Composable
 fun SessionScreenImpl(
     wordData: WordDataSessionUI,
+    debugInfo: String = "",
     onOpenSecretClick: () -> Unit = {},
     onCorrectClick: () -> Unit = {},
     onWrongClick: () -> Unit = {}
@@ -64,20 +66,18 @@ fun SessionScreenImpl(
         Text(text = "Tags: ${wordData.tags.joinToString(", ")}")
 
         Spacer(modifier = Modifier.height(32.dp))
-
         Row {
             Button(onClick = onCorrectClick) {
                 Text(text = "Correct")
             }
-
             Spacer(modifier = Modifier.width(16.dp))
-
             Button(onClick = onWrongClick) {
                 Text(text = "Wrong")
             }
         }
 
-
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(text = debugInfo)
     }
 }
 
@@ -109,7 +109,12 @@ fun SessionScreenWordPreview() {
             word = "Word",
             translate = "**********",
             tags = setOf("tag1")
-        )
+        ),
+        debugInfo = """
+            Words: word1, word2, word3 
+            Wrong: word4, word5
+            Last: word6
+        """.trimIndent()
     )
 }
 

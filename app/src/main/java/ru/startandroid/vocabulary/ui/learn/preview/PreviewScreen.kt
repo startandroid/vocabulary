@@ -55,8 +55,10 @@ fun PreviewScreenInternal(
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onLearnClick) {
-            Text(text = "Learn")
+        if (data.isNotEmpty()) {
+            Button(onClick = onLearnClick) {
+                Text(text = "Learn")
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package ru.startandroid.vocabulary.ui.learn.session
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,46 +17,55 @@ import javax.inject.Inject
 class SessionScreenViewModel @Inject constructor(
     private val incrementScoreUseCase: IncrementScoreUseCase,
     private val decrementScoreUseCase: DecrementScoreUseCase
-): ViewModel() {
+) : ViewModel() {
 
-    val words = mutableListOf<WordDataSession>()
-    val wrong = mutableListOf<WordDataSession>()
+    private val words = mutableListOf<WordDataSession>()
+    private val wrong = mutableListOf<WordDataSession>()
     private var counter = 0
 
-    var lastWords = LastWords(0)
+    private var lastWords = LastWords(0)
 
-    val secret = "*".repeat(10)
+    private val secret = "*".repeat(10)
 
     lateinit var currentWordDataSession: WordDataSession
 
     private val _currentWord = MutableLiveData<WordDataSessionUI>()
     val currentWord: LiveData<WordDataSessionUI> = _currentWord
 
+    val debugInfo = mutableStateOf("")
+
     fun putWordData(data: List<WordData>) {
         if (words.isNotEmpty()) return
-        words.addAll(data.map { WordDataSession(word = it.word, translate = it.translate, tags = it.tags) })
+        words.addAll(data.map {
+            WordDataSession(
+                word = it.word,
+                translate = it.translate,
+                tags = it.tags
+            )
+        })
         calculateLast()
         nextWord()
     }
 
     private fun calculateLast() {
-        val lastWordsSize = when (words.size) {
-            in 0..1 -> 0
-            in 2..3 -> 1
-            in 4..5 -> 2
-            in 6..7 -> 3
-            in 8..9 -> 4
-            else -> 5
-        }
+        val lastWordsSize = kotlin.math.min(words.size / 2, 8)
+//        val lastWordsSize = when (words.size) {
+//            in 0..1 -> 0
+//            in 2..3 -> 1
+//            in 4..5 -> 2
+//            in 6..7 -> 3
+//            in 8..9 -> 4
+//            else -> 5
+//        }
         lastWords = LastWords(lastWordsSize)
     }
 
     private fun nextWord() {
         val s = shouldPickWrong()
         Log.d("qweee", "nextWord should pick wrong = $s, counter = $counter")
-        Log.d("qweee", "words = ${words.map { it.word to it.reverse }}")
-        Log.d("qweee", "wrong = ${wrong.map { it.word to it.reverse }}")
-        Log.d("qweee", "lastWords = ${lastWords.entries.map { "(${it.key.word}, ${it.key.reverse}, ${it.value})" }}")
+        Log.d("qweee", "words = ${words.map { it.word to it.sessionScore }}")
+        Log.d("qweee", "wrong = ${wrong.map { it.word to it.sessionScore }}")
+        Log.d("qweee", "lastWords = ${lastWords.entries.map { "(${it.key.word}, ${it.key.sessionScore}, ${it.value})" }}")
 
         val list = if (s) {
             counter = 0
@@ -63,9 +73,17 @@ class SessionScreenViewModel @Inject constructor(
         } else {
             words
         }
-        counter++
-        val wordData = list[0]
         list.shuffle()
+        list.sortBy { it.sessionScore }
+        counter++
+        debugInfo.value = """
+            [words] ${words.joinToString(", ") { it.word }}
+            
+            [wrong] ${wrong.joinToString(", ") { it.word }}
+            
+            [last] ${lastWords.entries.joinToString(", ") { it.key.word }}
+        """.trimIndent()
+        val wordData = list[0]
         Log.d("qweee", "nextWord = $wordData")
         currentWordDataSession = wordData
         _currentWord.value = WordDataSessionUI(
@@ -106,7 +124,12 @@ class SessionScreenViewModel @Inject constructor(
         }
         words.remove(wordData)
         wrong.remove(wordData)
-        lastWords.putCorrect(wordData.copy(reverse = !wordData.reverse))
+        lastWords.putCorrect(
+            wordData.copy(
+                reverse = !wordData.reverse,
+                sessionScore = wordData.sessionScore + 1
+            )
+        )
         nextWord()
     }
 
@@ -118,16 +141,20 @@ class SessionScreenViewModel @Inject constructor(
         }
         words.remove(wordData)
         wrong.remove(wordData)
-        lastWords.putWrong(wordData)
+        lastWords.putWrong(wordData.copy(sessionScore = wordData.sessionScore - 1))
         nextWord()
     }
 
     fun openSecret() {
         Log.d("qweee", "open secret")
-        _currentWord.value = WordDataSessionUI(word = currentWordDataSession.word, translate = currentWordDataSession.translate, tags = currentWordDataSession.tags)
+        _currentWord.value = WordDataSessionUI(
+            word = currentWordDataSession.word,
+            translate = currentWordDataSession.translate,
+            tags = currentWordDataSession.tags
+        )
     }
 
-    inner class LastWords(private val maxSize: Int): LinkedHashMap<WordDataSession, String>() {
+    inner class LastWords(private val maxSize: Int) : LinkedHashMap<WordDataSession, String>() {
 
         fun putCorrect(word: WordDataSession) {
             put(word, "correct")
@@ -156,4 +183,5 @@ data class WordDataSession(
     val translate: String,
     val tags: Set<String>,
     val reverse: Boolean = false,
+    val sessionScore: Int = 0
 )
