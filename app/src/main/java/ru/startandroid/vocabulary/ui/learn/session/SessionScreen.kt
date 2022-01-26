@@ -25,17 +25,19 @@ fun SessionScreen(
     sessionScreenViewModel: SessionScreenViewModel = hiltViewModel()
 ) {
     sessionScreenViewModel.putWordData(optionsScreenViewModel.data.value!!)
-    SessionScreenAfterInit(sessionScreenViewModel)
+    SessionScreenAfterInit(sessionScreenViewModel, optionsScreenViewModel.showDebugInfo.value)
 }
 
 @Composable
 fun SessionScreenAfterInit(
-    sessionScreenViewModel: SessionScreenViewModel = hiltViewModel()
+    sessionScreenViewModel: SessionScreenViewModel,
+    showDebugInfo: Boolean = false
 ) {
     val word = sessionScreenViewModel.currentWord.observeAsState()
 
     SessionScreenImpl(
         wordData = word.value!!,
+        showDebugInfo = showDebugInfo,
         debugInfo = sessionScreenViewModel.debugInfo.value,
         onOpenSecretClick = sessionScreenViewModel::openSecret,
         onCorrectClick = sessionScreenViewModel::correct,
@@ -46,15 +48,18 @@ fun SessionScreenAfterInit(
 @Composable
 fun SessionScreenImpl(
     wordData: WordDataSessionUI,
+    showDebugInfo: Boolean = false,
     debugInfo: String = "",
     onOpenSecretClick: () -> Unit = {},
     onCorrectClick: () -> Unit = {},
     onWrongClick: () -> Unit = {}
 ) {
 
-    Column(modifier = Modifier
-        .padding(16.dp)
-        .fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize()
+    ) {
 
         Spacer(modifier = Modifier.height(16.dp))
         Item("Word", wordData.word, onOpenSecretClick)
@@ -75,9 +80,10 @@ fun SessionScreenImpl(
                 Text(text = "Wrong")
             }
         }
-
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(text = debugInfo)
+        if (showDebugInfo) {
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(text = debugInfo)
+        }
     }
 }
 
@@ -110,6 +116,7 @@ fun SessionScreenWordPreview() {
             translate = "**********",
             tags = setOf("tag1")
         ),
+        showDebugInfo = true,
         debugInfo = """
             Words: word1, word2, word3 
             Wrong: word4, word5
