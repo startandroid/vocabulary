@@ -46,7 +46,7 @@ fun OptionsScreen(
 
 @Composable
 private fun OptionsScreenInternal(
-    count: MutableState<Int> = mutableStateOf(10),
+    count: MutableState<String> = mutableStateOf("10"),
     chips: List<ChipData> = emptyList(),
     onPreviewClick: () -> Unit = { },
     onChipClick: (String) -> Unit = { },
@@ -59,8 +59,8 @@ private fun OptionsScreenInternal(
             .fillMaxSize()
     ) {
         OutlinedTextField(
-            value = count.value.toString(),
-            onValueChange = { count.value = it.toInt() },
+            value = count.value,
+            onValueChange = { count.value = it },
             label = { Text("Words count") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )

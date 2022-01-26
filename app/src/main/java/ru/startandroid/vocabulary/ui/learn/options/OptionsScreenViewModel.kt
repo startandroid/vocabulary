@@ -27,7 +27,7 @@ class OptionsScreenViewModel @Inject constructor(
     private val _chips = MutableLiveData<List<ChipData>>(emptyList())
     val chips: LiveData<List<ChipData>> = _chips
 
-    val count = mutableStateOf(15)
+    val count = mutableStateOf("15")
 
     init {
         viewModelScope.launch {
@@ -81,14 +81,14 @@ class OptionsScreenViewModel @Inject constructor(
 
     private fun currentOptions(): SessionOptions {
         return SessionOptions(
-            count = count.value,
+            count = count.value.toIntOrNull() ?: 10,
             tags = chips.value?.filter { it.isSelected }?.map { it.label }?.toSet()
                 ?: emptySet()
         )
     }
 
     private fun applyOptions(options: SessionOptions) {
-        count.value = options.count
+        count.value = options.count.toString()
         _chips.value = chips.value?.map {
             it.copy(isSelected = options.tags.contains(it.label))
         }
