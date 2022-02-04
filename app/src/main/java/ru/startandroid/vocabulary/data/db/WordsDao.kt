@@ -27,4 +27,7 @@ interface WordsDao {
     @Query("SELECT score FROM words WHERE word = :word")
     suspend fun getScore(word: String): Int
 
+    @Query("UPDATE words SET lastLearned = :timestamp WHERE word = :word")
+    suspend fun setLastLearnedTime(word: String, timestamp: Long)
+
 }

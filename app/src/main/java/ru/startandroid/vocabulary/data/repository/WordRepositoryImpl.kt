@@ -29,4 +29,8 @@ class WordRepositoryImpl(
         wordsDao.decrementScore(word)
     }
 
+    override suspend fun learned(word: String) {
+        wordsDao.setLastLearnedTime(word, System.currentTimeMillis())
+    }
+
 }

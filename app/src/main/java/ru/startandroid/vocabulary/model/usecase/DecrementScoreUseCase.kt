@@ -9,6 +9,7 @@ class DecrementScoreUseCase @Inject constructor(
 
     suspend fun invoke(word: String) {
         wordRepository.decrementScore(word)
+        wordRepository.learned(word)
     }
 
 }

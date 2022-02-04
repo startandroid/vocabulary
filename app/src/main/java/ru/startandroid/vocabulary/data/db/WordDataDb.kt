@@ -9,5 +9,6 @@ data class WordDataDb(
     var word: String,
     var translate: String,
     var tags: String,
-    var score: Int
+    var score: Int = 0,
+    var lastLearned: Long = 0
 )
