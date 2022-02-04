@@ -8,17 +8,14 @@ import javax.inject.Provider
 import kotlin.random.Random
 
 class GetWordsAccordingToOptionsUseCase @Inject constructor(
-    private val wordRepository: WordRepository,
-    private val randomProvider: Provider<Random>
+    private val wordRepository: WordRepository
 ) {
 
     // TODO make data extracting more fair according by all tags
     // Otherwise some tags will not be in results
     suspend fun invoke(options: SessionOptions): List<WordData> {
         return wordRepository.getAllWords()
-            .filter { it.tags.any { options.tags.contains(it) } }
-            .shuffled(randomProvider.get())
-            .take(options.count)
+            .filter { wordData -> wordData.tags.any { options.tags.contains(it) } }
     }
 
 }

@@ -8,4 +8,5 @@ interface WordRepository {
     suspend fun getAllWords(): List<WordData>
     suspend fun incrementScore(word: String)
     suspend fun decrementScore(word: String)
+    suspend fun learned(word: String)
 }

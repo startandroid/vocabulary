@@ -6,6 +6,12 @@ import javax.inject.Inject
 
 class WordMapperDbToUi @Inject constructor() : Mapper<WordDataDb, WordData>() {
     override fun map(input: WordDataDb): WordData =
-        WordData(word = input.word, translate = input.translate, tags = input.tags.split("|").toHashSet())
+        WordData(
+            word = input.word,
+            translate = input.translate,
+            tags = input.tags.split("|").toHashSet(),
+            score = input.score,
+            lastLearned = input.lastLearned
+        )
 
 }

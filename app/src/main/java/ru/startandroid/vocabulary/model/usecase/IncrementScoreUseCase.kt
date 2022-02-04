@@ -9,6 +9,7 @@ class IncrementScoreUseCase @Inject constructor(
 
     suspend fun invoke(word: String) {
         wordRepository.incrementScore(word)
+        wordRepository.learned(word)
     }
 
 }

@@ -1,5 +1,6 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,6 +25,9 @@ class OptionsScreenViewModel @Inject constructor(
     private val _data = MutableLiveData<List<WordData>>(emptyList())
     val data: LiveData<List<WordData>> = _data
 
+    private val _chosenData = MutableLiveData<List<WordData>>(emptyList())
+    val chosenData: LiveData<List<WordData>> = _chosenData
+
     private val _chips = MutableLiveData<List<ChipData>>(emptyList())
     val chips: LiveData<List<ChipData>> = _chips
 
@@ -36,6 +40,7 @@ class OptionsScreenViewModel @Inject constructor(
             preferencesRepository.getLastSessionOptions()?.let {
                 applyOptions(it)
             }
+            refresh()
         }
     }
 
@@ -47,6 +52,7 @@ class OptionsScreenViewModel @Inject constructor(
                 it
             }
         }
+        refresh()
     }
 
     fun onPreviewClick() {
@@ -54,10 +60,6 @@ class OptionsScreenViewModel @Inject constructor(
         viewModelScope.launch {
             preferencesRepository.saveSessionOptions(currentOptions())
         }
-    }
-
-    fun onRefresh() {
-        refresh()
     }
 
     fun onSelectAll() {
@@ -70,6 +72,19 @@ class OptionsScreenViewModel @Inject constructor(
         _chips.value = chips.value?.map {
             it.copy(isSelected = false)
         }
+    }
+
+    fun chosenData(data: List<WordData>) {
+        _chosenData.value = data
+    }
+
+    var firstViewCreated = true
+    fun onViewCreated() {
+        if (firstViewCreated) {
+            firstViewCreated = false
+            return
+        }
+        refresh()
     }
 
     private fun refresh() {

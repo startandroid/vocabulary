@@ -1,6 +1,5 @@
 package ru.startandroid.vocabulary.ui.learn.options
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -8,11 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,9 +26,18 @@ fun OptionsScreen(
     navController: NavHostController,
     optionsScreenViewModel: OptionsScreenViewModel = hiltViewModel()
 ) {
+    remember {
+        // workaround to call this method only when screen is created
+        // hope, will find better way later
+        optionsScreenViewModel.onViewCreated()
+        0
+    }
+
     val chips = optionsScreenViewModel.chips.observeAsState()
+    val data = optionsScreenViewModel.data.observeAsState()
     OptionsScreenInternal(
         count = optionsScreenViewModel.count,
+        availableCount = data.value?.size.toString(),
         chips = chips.value ?: emptyList(),
         showDebugInfo = optionsScreenViewModel.showDebugInfo,
         onPreviewClick = {
@@ -45,10 +50,10 @@ fun OptionsScreen(
     )
 }
 
-
 @Composable
 private fun OptionsScreenInternal(
     count: MutableState<String> = mutableStateOf("10"),
+    availableCount: String? = "",
     chips: List<ChipData> = emptyList(),
     showDebugInfo: MutableState<Boolean> = mutableStateOf(false),
     onPreviewClick: () -> Unit = { },
@@ -65,8 +70,10 @@ private fun OptionsScreenInternal(
             value = count.value,
             onValueChange = { count.value = it },
             label = { Text("Words count") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.width(120.dp)
         )
+
         Spacer(modifier = Modifier.height(16.dp))
         FlowRow(mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp) {
             for (chip in chips) {
@@ -101,8 +108,9 @@ private fun OptionsScreenInternal(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        val availableString = availableCount?.let { "($it)" } ?: ""
         Button(onClick = { onPreviewClick() }) {
-            Text(text = "Preview")
+            Text(text = "Preview $availableString")
         }
     }
 }
@@ -144,6 +152,7 @@ private fun Chip(
 fun OptionsScreenPreview() {
     VocabularyTheme {
         OptionsScreenInternal(
+            availableCount = "100",
             chips = listOf(
                 ChipData("Chip1", true),
                 ChipData("Chip123", false),

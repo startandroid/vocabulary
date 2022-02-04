@@ -24,7 +24,7 @@ fun SessionScreen(
     optionsScreenViewModel: OptionsScreenViewModel = hiltViewModel(navController.getBackStackEntry("options")),
     sessionScreenViewModel: SessionScreenViewModel = hiltViewModel()
 ) {
-    sessionScreenViewModel.putWordData(optionsScreenViewModel.data.value!!)
+    sessionScreenViewModel.putWordData(optionsScreenViewModel.chosenData.value!!)
     SessionScreenAfterInit(sessionScreenViewModel, optionsScreenViewModel.showDebugInfo.value)
 }
 
